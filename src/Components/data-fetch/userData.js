@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react"
 
-const useUserData = ()=>{
-    const [users, setUsers] = useState([])
+const useUserData = ({setCount, limit})=>{
+    const [usersList, setUsersList] = useState([])
+    
 useEffect(()=>{
     (async ()=>{
-        const res =await fetch("https://dummyjson.com/user?skip=10&limit=60")
+        const res =await fetch(`https://dummyjson.com/user?skip=10&limit=${limit}`)
         const result = await res.json();
-        // console.log(result)
-        setUsers(result)
+        // console.log("result in user data", result)
+        setUsersList(result?.users)
+        setCount(result.total)
     })()
-},[])
-return users
+},[limit])
+// console.log("usersList", usersList)
+return {usersList}
 }
 
 export default useUserData
