@@ -8,11 +8,11 @@ const Home = () => {
     const [searchString, setSearchstring] = useState("")
     const [count, setCount] =useState(0)
     const [limit, setLimit] = useState(30)
-    const {usersList} = useUserData({setCount, limit});
+    const [skip, setSkip] = useState(0)
+    const {usersList} = useUserData({setCount, limit, skip});
     const [data, setData] = useState([])
     const {searchResult} = useUserSearchData({searchString, setCount})
     useEffect(()=>{
-        
         if(searchString !== ""){
             setData(searchResult)
         } else{
@@ -20,7 +20,13 @@ const Home = () => {
         }
     }, [searchString, searchResult])
     useEffect(()=>{
-        setData(usersList)
+      if (usersList && usersList.length) {
+        const dataIds = data.map(user => user.id);
+        const newUsers = usersList.filter(user => !dataIds.includes(user.id));  
+        if (newUsers.length > 0) {
+          setData(prevData => [...prevData, ...newUsers]);
+        }
+      }
     
     },[usersList])
     // useEffect(()=>{
@@ -31,11 +37,11 @@ const Home = () => {
     <Searchbar setSearchstring={setSearchstring} />
     <InfiniteScroll 
         dataLength={data.length}
-        next={()=>{setLimit(limit + 30)}}
-        hasMore={count > limit}
-        loader={<h4>Loading...</h4>}
+        next={()=>{setSkip(skip + 30)}}
+        hasMore={count > data.length}
+        loader={<h4 className='text-md'>Loading...</h4>}
         endMessage={
-          <p style={{ textAlign: 'center' }}>
+          <p className='text-center'>
             <b>Yay! You have seen it all</b>
           </p>
         }
