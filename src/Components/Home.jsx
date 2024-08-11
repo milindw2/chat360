@@ -9,16 +9,23 @@ const Home = () => {
     const [count, setCount] =useState(0)
     const [limit, setLimit] = useState(30)
     const [skip, setSkip] = useState(0)
-    const {usersList} = useUserData({setCount, limit, skip});
+    const {usersList, userCount} = useUserData({setCount, limit, skip});
     const [data, setData] = useState([])
-    const {searchResult} = useUserSearchData({searchString, setCount})
+    const {search} = useUserSearchData()
     useEffect(()=>{
         if(searchString !== ""){
-            setData(searchResult)
+            // setData(searchResult)
+           (async()=>{
+            const searchResult = await search(searchString)
+            setData(searchResult.users)
+            setCount(searchResult.count)
+           })()
+            
         } else{
+            setCount(userCount)
             setData(usersList)
         }
-    }, [searchString, searchResult])
+    }, [searchString])
     useEffect(()=>{
       if (usersList && usersList.length) {
         const dataIds = data.map(user => user.id);
@@ -27,11 +34,9 @@ const Home = () => {
           setData(prevData => [...prevData, ...newUsers]);
         }
       }
-    
+      setCount(userCount)
     },[usersList])
-    // useEffect(()=>{
-    //     console.log("limit", limit)
-    // },[limit])
+
   return (
     <div className="">
     <Searchbar setSearchstring={setSearchstring} />

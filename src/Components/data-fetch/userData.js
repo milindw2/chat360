@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 
 const useUserData = ({setCount, limit, skip})=>{
     const [usersList, setUsersList] = useState([])
+    const [userCount, setUserCount]= useState(0)
     
 useEffect(()=>{
     (async ()=>{
@@ -9,11 +10,11 @@ useEffect(()=>{
         const result = await res.json();
         // console.log("result in user data", result)
         setUsersList(result?.users)
-        setCount(result.total)
+        setUserCount(result.total)
     })()
 },[limit, skip])
 // console.log("usersList", usersList)
-return {usersList}
+return {usersList, userCount}
 }
 
 export default useUserData
