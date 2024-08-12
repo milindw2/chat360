@@ -9,21 +9,23 @@ const Home = () => {
     const [count, setCount] =useState(0)
     const [limit, setLimit] = useState(30)
     const [skip, setSkip] = useState(0)
+    const [tempData, setTempData] = useState([])
     const {usersList, userCount} = useUserData({setCount, limit, skip});
     const [data, setData] = useState([])
     const {search} = useUserSearchData()
     useEffect(()=>{
         if(searchString !== ""){
-            // setData(searchResult)
-           (async()=>{
+          (async()=>{
+             setTempData(data)
             const searchResult = await search(searchString)
             setData(searchResult.users)
             setCount(searchResult.count)
            })()
             
         } else{
+            // setSkip(0)
             setCount(userCount)
-            setData(usersList)
+            setData(tempData)
         }
     }, [searchString])
     useEffect(()=>{
